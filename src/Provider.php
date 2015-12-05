@@ -11,7 +11,7 @@ class Provider extends AbstractProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    protected $scopes = [''];
+    protected $scopes = ['read_public'];
 
     /**
      * {@inheritdoc}
@@ -56,12 +56,15 @@ class Provider extends AbstractProvider implements ProviderInterface
      */
     protected function mapUserToObject(array $user)
     {
+
+        preg_match('#https://www.pinterest.com/(.+?)/#', $user['data']['url'], $matches);
+        $nickname = $matches[0];
+
         return (new User())->setRaw($user)->map(
             [
-                'id' => $user['data']['user']['id'],
-                'nickname' => $user['data']['user']['username'],
-                'name' => $user['data']['user']['display_name'],
-                'avatar' => $user['data']['user']['profile_picture_url'],
+                'id' => $user['data']['id'],
+                'nickname' => $nickname,
+                'name' => $user['data']['first_name'] . ' ' . $user['data']['last_name'],
             ]
         );
     }
